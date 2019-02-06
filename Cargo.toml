@@ -1,0 +1,7 @@
+[package]
+name = "rust-shit"
+version = "0.1.0"
+authors = ["Daniel Wanner <daniel.wanner@tubber.xyz>"]
+edition = "2018"
+
+[dependencies]
