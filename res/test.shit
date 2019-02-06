@@ -1,5 +1,5 @@
-fn test_function (arg1 ,  arg2  ,   arg3) ;
-fn test2_function (    arg1 );
-fn func(arg1, arg2){
+fn function(argument1, argument2) {
     var x;
+    var y;
+    var z;
 }
