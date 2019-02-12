@@ -1,9 +1,11 @@
-pub mod compiler;
+pub mod frontend;
 
-use compiler::lexer::Lexer;
-use compiler::ast::*;
-use compiler::parser::Parser;
-use compiler::token::*;
+pub mod vm;
+
+use frontend::lexer::Lexer;
+use frontend::ast::*;
+use frontend::parser::Parser;
+use frontend::token::*;
 
 fn main() {
     let code = String::from(
