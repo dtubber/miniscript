@@ -5,3 +5,10 @@ authors = ["Daniel Wanner <daniel.wanner@tubber.xyz>"]
 edition = "2018"
 
 [dependencies]
+serde = "*"
+serde_derive = "*"
+bincode = "*"
+
+[[example]]
+name = "parser"
+crate-type = ["bin"]

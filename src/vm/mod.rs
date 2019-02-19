@@ -1,12 +1,11 @@
 pub mod instruction;
 
-use instruction::*;
-
 pub mod prelude {
     pub use super::instruction::*;
     pub use super::*;
 }
 
+use instruction::*;
 use std::collections::VecDeque;
 
 pub struct VM {
