@@ -1,8 +1,8 @@
-extern crate rust_shit;
+extern crate miniscript as mns;
 
-use rust_shit::prelude::*;
+use mns::prelude::*;
 
-use rust_shit::frontend::parser::Parser;
+use mns::frontend::parser::Parser;
 
 fn main() {
     let code = String::from(

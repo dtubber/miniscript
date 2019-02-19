@@ -1,0 +1,5 @@
+fn function(argument1, argument2) {
+    var:int x;
+    var:int y;
+    var:float z;
+}

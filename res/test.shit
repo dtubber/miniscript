@@ -1,5 +1,0 @@
-fn function(argument1, argument2) {
-    var x;
-    var y;
-    var z;
-}
