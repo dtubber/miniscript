@@ -9,22 +9,25 @@ pub enum Expression {
     Multiplication(ExpressionBox, ExpressionBox),
     Division(ExpressionBox, ExpressionBox),
     BinaryNot(ExpressionBox),
+    Reference(ExpressionBox),
     Equals(ExpressionBox, ExpressionBox),
     NotEquals(ExpressionBox, ExpressionBox),
     LessThan(ExpressionBox, ExpressionBox),
     GreaterThan(ExpressionBox, ExpressionBox),
     LessThanOrEquals(ExpressionBox, ExpressionBox),
     GreaterThanOrEquals(ExpressionBox, ExpressionBox),
-    Variable(String),
-    Constant(isize),
+    Variable(bool, String, String),
+    StaticInteger(i64),
+    StaticFloat(f64),
+    StaticString(String)
 }
 
 /**
  * Represents argument types
  */
 pub enum Argument {
-    ByValue(Expression),
-    ByReference(String)
+    Mutable(String, String),
+    Constant(String, String)
 }
 
 /**
