@@ -6,7 +6,7 @@ use mns::frontend::parser::Parser;
 
 fn main() {
     let code = String::from(
-        include_str!("../res/test.shit")
+        include_str!("../res/test.mns")
     );
     println!("Source code:");
     println!("-----");

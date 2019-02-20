@@ -12,3 +12,8 @@ bincode = "*"
 [[example]]
 name = "parser"
 crate-type = ["bin"]
+
+[[example]]
+name = "binary-encode"
+path = "examples/binary_encode.rs"
+crate-type = ["bin"]

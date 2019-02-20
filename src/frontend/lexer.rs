@@ -89,6 +89,10 @@ impl Lexer {
         }
     }
 
+    fn swallow_comment(&mut self) {
+        
+    }
+
     fn swallow_whitespaces(&mut self) -> Option<Token> {
         let mut chars = String::new();
         loop {

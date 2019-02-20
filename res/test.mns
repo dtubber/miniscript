@@ -1,5 +1,26 @@
-fn function(argument1, argument2) {
-    var:int x;
-    var:int y;
-    var:float z;
+struct: Test {
+    pub const:string name;
+    pub var:int counter;
 }
+
+fn: add(var:&int arg1, const:&int arg2) {
+    *arg1 = *arg1 + *arg2;
+}
+
+fn: main(var:[string] args) {
+    const:int num = 4;
+    var:Test test = {
+        name: "Test";
+        counter: 0;
+    };
+    add(&test.counter, &num);
+}
+
+/*
+
+var:(Type) (Name); <== declare a mutable variable
+const:(Type) (Name); <== declare an immutable variable
+var:&(Type) <== declare a mutable reference
+const:&(Type) (Name) <== declare an immutable reference
+
+*/
