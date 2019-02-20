@@ -22,6 +22,6 @@ fn main() {
     let mut parser = Parser::new(tokens);
     println!("Parser created!");
     println!("Parsing...");
-    let program = parser.parse();
+    let _program = parser.parse();
     println!("Done parsing!");
 }

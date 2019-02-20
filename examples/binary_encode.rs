@@ -15,7 +15,7 @@ fn main() {
     println!("creaitng deque...");
     let mut deque = VecDeque::from(data);
     let mut vec: Vec<u8> = Vec::new();
-    for i in 0..3 {
+    for _i in 0..3 {
         let opt = deque.pop_front();
         if opt.is_none() {
             println!("Error! Is none!");
