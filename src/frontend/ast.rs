@@ -17,6 +17,8 @@ pub enum Expression {
     LessThanOrEquals(ExpressionBox, ExpressionBox),
     GreaterThanOrEquals(ExpressionBox, ExpressionBox),
     Variable(bool, String, String),
+    NameAccess(ExpressionBox, ExpressionBox),
+    MemberAccess(ExpressionBox, ExpressionBox),
     StaticInteger(i64),
     StaticFloat(f64),
     StaticString(String)

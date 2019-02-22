@@ -1,3 +1,13 @@
+mod: sys {
+    struct: Blub {
+
+    }
+
+    fn: new_blub(): Blub {
+        
+    }
+}
+
 struct: Test {
     pub const:string name;
     pub var:int counter;
