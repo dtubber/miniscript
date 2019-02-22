@@ -11,5 +11,4 @@ pub mod prelude {
     pub use super::frontend::prelude::*;
     pub use super::vm::prelude::*;
     pub use super::core::prelude::*;
-    pub use bincode::*;
 }
