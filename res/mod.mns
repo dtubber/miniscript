@@ -1,0 +1,8 @@
+mod: test {
+    fn: test(var:int x, var:int y): int {
+        var:int i = 4;
+    }
+}
+fn: main(): int {
+    const:int x = 69;
+}

@@ -262,7 +262,9 @@ impl Lexer {
             "else",
             "true",
             "false",
-            "var"
+            "var",
+            "const",
+            "mod",
         ];
 
         self.push_cursor();

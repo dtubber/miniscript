@@ -8,9 +8,12 @@ edition = "2018"
 serde = "*"
 serde_derive = "*"
 bincode = "*"
+enum-primitive-derive = "*"
+num-traits = "*"
 
 [[example]]
 name = "parser"
+path = "examples/parser.rs"
 crate-type = ["bin"]
 
 [[example]]

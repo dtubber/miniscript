@@ -16,6 +16,7 @@ pub union Reg {
     pub int: i64,
     pub byte: u8,
     pub boolean: bool,
+    pub bytes: [u8; 8]
 }
 
 impl Reg {
@@ -81,86 +82,138 @@ impl VM {
             Opcode::HLT => {
                 return true;
             },
-            Opcode::LOAD => {
-                let val = self.decode::<i64>();
-                let destination = self.program[self.pc];
-                self.pc += 1;
-                self.registers[destination as usize].int = val;
+            Opcode::LDB => {
+                let dest = self.decode_byte();
+                let byte = self.decode_byte();
+                self.registers[dest as usize].byte = byte;
             },
-            Opcode::LOADF => {
-                let val = self.decode::<f64>();
-                let destination = self.program[self.pc];
-                self.pc += 1;
-                self.registers[destination as usize].float = val;
+            Opcode::LDI => {
+                let dest = self.decode_byte();
+                let int = self.decode::<i64>();
+                self.registers[dest as usize].int = int;
             },
-            Opcode::MOV => {
-                let size = self.program[self.pc];
-                self.pc += 1;
-
-                let source_addr = self.decode_address();
-                let dest_addr = self.decode_address();
-
-                let mut data = Vec::new();
-
-                match source_addr.0 {
-                    AddressLocation::Program => {
-                        let mut addr = source_addr.1;
-                        for i in 0..size {
-                            data.push(self.program[(addr + (i as u64)) as usize]);
-                            addr += i as u64;
-                        }
-                    },
-                    AddressLocation::Register => {
-                        let reg_bytes = unsafe { bincode::serialize(&self.registers[source_addr.0 as usize].int).unwrap() };
-                        let len = if size > 4 { 4 } else { size };
-
-                        for i in 0..len {
-                            data.push(reg_bytes[i as usize]);
-                        }
-                    },
-                    AddressLocation::Stack => {
-                        let mut addr = source_addr.1;
-                        for i in 0..size {
-                            data.push(self.stack[(addr + (i as u64)) as usize]);
-                            addr += i as u64;
-                        }
-                    },
-                    _ => {
-                        unimplemented!("Invalid memory access!");
-                    }
-                };
-
-                match dest_addr.0 {
-                    AddressLocation::Register => {
-                        if data.len() != 4 {
-                            data.resize(4, 0);
-                        }
-                        let reg_int = bincode::deserialize::<i64>(&data).unwrap();
-                        self.registers[dest_addr.1 as usize].int = reg_int;
-                    },
-                    AddressLocation::Stack => {
-                        let mut addr = dest_addr.1;
-                        for i in 0..size {
-                            self.stack[(addr + i as u64) as usize] = data[i as usize];
-                            addr += i as u64;
-                        }
-                    },
-                    _ => {
-                        unimplemented!("Invalid memory access!");
-                    }
-                };
+            Opcode::LDF => {
+                let dest = self.decode_byte();
+                let float = self.decode::<f64>();
+                self.registers[dest as usize].float = float;
             },
-            Opcode::PUSH => {
-                let push_size = self.decode::<u64>();
-                let stack_diff = (self.sp + push_size as usize) - self.stack.len();
-                if stack_diff > 0 {
-                    self.stack.resize(self.stack.len() + (stack_diff * 2), 0);
+            Opcode::MOVR_R => {
+                let dest = self.decode_byte();
+                let source = self.decode_byte();
+                self.registers[dest as usize] = self.registers[source as usize];
+            },
+            Opcode::MOVR_P => {
+                let dest = self.decode_byte();
+                let source = self.decode::<u64>();
+                let mut size = self.decode_byte() as u64;
+                size = if size > 8 { 8 } else { size };
+                let mut buf = [0; 8];
+                for i in 0..size - 1 {
+                    let addr = (source + i) as usize;
+                    buf[i as usize] = self.program[addr];
                 }
-                self.sp += push_size as usize;
+                self.registers[dest as usize].bytes = buf;
             },
-            Opcode::POP => {
-                let pop_size = self.decode::<u64>();
-                self.sp -= pop_size as usize;
+            Opcode::MOVR_S => {
+                let dest = self.decode_byte();
+                let source = self.decode::<u64>();
+                let mut size = self.decode_byte() as u64;
+                size = if size > 8 { 8 } else { size };
+                let mut buf = [0; 8];
+                for i in 0..size - 1 {
+                    let addr = (source + i) as usize;
+                    buf[i as usize] = self.stack[addr];
+                }
+                self.registers[dest as usize].bytes = buf;
+            },
+            Opcode::MOVR_H => {
+                unimplemented!("Heap not yet implemented!");
+            },
+            Opcode::MOVS_R => {
+                let mut dest = self.decode::<u64>();
+                let source = self.decode_byte();
+                let mut size = self.decode_byte() as u64;
+                size = if size > 8 { 8 } else { size };
+                for i in 0..size - 1 {
+                    self.stack[dest as usize] = unsafe { self.registers[source as usize].bytes[i as usize] };
+                    dest += 1;
+                }
+            },
+            Opcode::MOVS_P => {
+                let mut dest = self.decode::<u64>();
+                let mut source = self.decode::<u64>();
+                let size = self.decode_byte() as u64;
+                for i in 0..size - 1 {
+                    self.stack[dest as usize] = self.program[source as usize];
+                    dest += 1;
+                    source += 1;
+                }
+            },
+            Opcode::MOVS_S => {
+                unimplemented!("Stack copy not yet implemented!");
+            },
+            Opcode::MOVS_H => {
+                unimplemented!("Heap not yet implemented!");
+            },
+            Opcode::MOVH_R => {
+                unimplemented!("Heap not yet implemented!");
+            },
+            Opcode::MOVH_P => {
+                unimplemented!("Heap not yet implemented!");
+            },
+            Opcode::MOVH_S => {
+                unimplemented!("Heap not yet implemented!");
+            },
+            Opcode::MOVH_H => {
+                unimplemented!("Heap not yet implemented!");
+            },
+            Opcode::ADD => {
+                let dest = self.decode_byte();
+                let lhs = self.decode_byte();
+                let rhs = self.decode_byte();
+                self.registers[dest as usize].int = unsafe { self.registers[lhs as usize].int + self.registers[rhs as usize].int };
+            },
+            Opcode::SUB => {
+                let dest = self.decode_byte();
+                let lhs = self.decode_byte();
+                let rhs = self.decode_byte();
+                self.registers[dest as usize].int = unsafe { self.registers[lhs as usize].int - self.registers[rhs as usize].int };
+            },
+            Opcode::MUL => {
+                let dest = self.decode_byte();
+                let lhs = self.decode_byte();
+                let rhs = self.decode_byte();
+                self.registers[dest as usize].int = unsafe { self.registers[lhs as usize].int * self.registers[rhs as usize].int };
+            },
+            Opcode::DIV => {
+                let dest = self.decode_byte();
+                let lhs = self.decode_byte();
+                let rhs = self.decode_byte();
+                self.registers[dest as usize].int = unsafe { self.registers[lhs as usize].int / self.registers[rhs as usize].int };
+            },
+            Opcode::ADDF => {
+                let dest = self.decode_byte();
+                let lhs = self.decode_byte();
+                let rhs = self.decode_byte();
+                self.registers[dest as usize].float = unsafe { self.registers[lhs as usize].float + self.registers[rhs as usize].float };
+            },
+            Opcode::SUBF => {
+                let dest = self.decode_byte();
+                let lhs = self.decode_byte();
+                let rhs = self.decode_byte();
+                self.registers[dest as usize].float = unsafe { self.registers[lhs as usize].float - self.registers[rhs as usize].float };
+            },
+            Opcode::MULF => {
+                let dest = self.decode_byte();
+                let lhs = self.decode_byte();
+                let rhs = self.decode_byte();
+                self.registers[dest as usize].float = unsafe { self.registers[lhs as usize].float * self.registers[rhs as usize].float };
+            },
+            Opcode::DIVF => {
+                let dest = self.decode_byte();
+                let lhs = self.decode_byte();
+                let rhs = self.decode_byte();
+                self.registers[dest as usize].float = unsafe { self.registers[lhs as usize].float / self.registers[rhs as usize].float };
             },
             _ => {
                 unimplemented!("Opcode \"{:X}\" not implemented!", opcode as u8);
@@ -169,20 +222,21 @@ impl VM {
         false
     }
 
+    #[inline]
     fn decode_opcode(&mut self) -> Opcode {
         let byte = self.program[self.pc];
         self.pc += 1;
         Opcode::from(&byte)
     }
-
-    fn decode_address(&mut self) -> (AddressLocation, u64) {
-        let address_raw = self.decode::<u64>();
-        let location_raw = (address_raw >> 61) as u8;
-        let location = AddressLocation::from(&location_raw);
-        let address = (address_raw << 3) >> 3;
-        (location, address)
+    
+    #[inline]
+    fn decode_byte(&mut self) -> u8 {
+        let byte = self.program[self.pc];
+        self.pc += 1;
+        byte
     }
-
+ 
+    #[inline]
     fn decode<T: DeserializeOwned>(&mut self) -> T {
         let size = std::mem::size_of::<T>();
         let mut bytes = Vec::new();

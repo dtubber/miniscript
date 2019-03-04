@@ -1,11 +1,13 @@
 extern crate miniscript;
+extern crate bincode;
 
 use std::collections::VecDeque;
 
-use miniscript::prelude::*;
+use bincode::*;
 
 fn main() {
     let mut int = 4u32;
+
     let mut data = serialize(&int).unwrap();
 
     println!("Data size: {}", data.len());
@@ -15,7 +17,7 @@ fn main() {
     println!("creaitng deque...");
     let mut deque = VecDeque::from(data);
     let mut vec: Vec<u8> = Vec::new();
-    for _i in 0..3 {
+    for _i in 0..4 {
         let opt = deque.pop_front();
         if opt.is_none() {
             println!("Error! Is none!");

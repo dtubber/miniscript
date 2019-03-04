@@ -6,12 +6,8 @@ use mns::frontend::parser::Parser;
 
 fn main() {
     let code = String::from(
-        include_str!("../res/test.mns")
+        include_str!("../res/mod.mns")
     );
-    println!("Source code:");
-    println!("-----");
-    println!("{}", code);
-    println!("-----");
     println!("Creating lexer...");
     let mut lexer = Lexer::new(code);
     println!("Lexer created!");
@@ -22,6 +18,9 @@ fn main() {
     let mut parser = Parser::new(tokens);
     println!("Parser created!");
     println!("Parsing...");
-    let _program = parser.parse();
+    let _program = parser.parse().unwrap();
     println!("Done parsing!");
+    for decl in _program.declarations {
+        decl.print(0);
+    }
 }
