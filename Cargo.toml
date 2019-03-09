@@ -10,6 +10,8 @@ serde_derive = "*"
 bincode = "*"
 enum-primitive-derive = "*"
 num-traits = "*"
+pest = "*"
+pest_derive = "*"
 
 [[example]]
 name = "parser"
